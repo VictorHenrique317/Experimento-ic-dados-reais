@@ -1,0 +1,123 @@
+*** DESCRIPTION ***
+
+Pre-process (pp) is a modification of TriclusterBox to pre-process a set of complete
+closed error-tolerant n-sets, retrieving a small number of large fragments
+to use as input of PAF or another method to find patterns given a set
+of fragments.
+
+
+*** RETURN VALUES ***
+
+pp returns values which can be used when called from a script. They
+are conformed to sysexit.h.
+* 0 is returned when pp successfully terminates.
+* 64 is returned when pp was incorrectly called.
+* 65 is returned when an input data line is not properly formatted.
+* 74 is returned when data could not be read or written on the disk.
+
+
+*** GENERAL ***
+
+* pp called with no option or with option --help (or -h) displays a
+reminder of the options.
+* pp --version (or simply pp -V) displays version information.
+
+
+*** INPUT DATA ***
+
+The name of the file containing the input patterns must be passed as
+an argument to pp.
+
+Every line in that file must be either empty (it is ignored) or
+contain n fields: the n dimensions of the pattern. Several different
+separators may be used to separate the fields and the same goes for
+the separations of the elements in a dimension field. The elements can
+be any string (as far as they do not include any of the
+separators!). Let us take an example. This line stands for the pattern
+({01-09-2007, 02-09-2007}, {Thomas, Harry, Max}, {basketball,
+gymnastics}) and could be part of an input pattern file:
+01-09-2007,02-09-2007: Thomas,Harry,Max basketball,gymnastics
+
+There are 3 dimensions here: the first one gathers dates, the second
+pupils and the last one sports. The fields are separated by the
+characters ":" or/and " ". The fact that two dimensions are separated
+by several separators (in our example both ":" and " " separate the
+dates from the pupils) does not raise any trouble. In this pattern,
+the elements in a same dimension are always separated by ",".
+
+To be properly understood, one must indicate to pp the characters
+that can separate dimensions and those that can separate elements in a
+dimension. Otherwise the defaults are used: " " to separate dimensions
+and "," to separate elements. The related options are --ids for Input
+Dimension Separators and --ies for Input Element Separators. In the
+previous example, assuming the patterns are listed in a file named
+"patterns", pp is to be called as follows:
+$ pp --ids ": " -f tensor patterns
+There is, here, no need to specify the option --ies since the default
+value is correct. Let us now discuss the two mandatory options that
+are used in the command above.
+
+The file defining the uncertain tensor in which the patterns hold must
+be given through option --file (-f). The file format is similar to
+that of the patterns but every non-empty line must have one additional
+field, the last one, containing a float number between 0 and 1. It is
+the membership degree of any n-tuple that can be made by taking one
+element in each of the n first fields. For example, the following line
+stands for the 3-tuples (01-09-2007, Thomas, basketball) and
+(01-09-2007, Harry, basketball) that both have the membership degree
+0.9:
+01-09-2007: Thomas,Harry basketball 0.9
+
+The separator defined with --ids and --ies for the patterns are used
+as well for the uncertain tensor. The n-tuples that are left undefined
+are associated with null membership degrees. If the membership degree
+of an n-tuple is defined several times in the file, only the last
+definition holds.
+
+Back to the example given earlier, the following call of pp selects
+patterns among those listed in the file named "patterns", these
+patterns hold in the uncertain tensor specified through the file named
+"tensor", strings made of ":" and/or " " separate the dimensions in
+both files, and "," (the default value) separates the elements in a
+dimension:
+$ pp --ids ": " -f tensor patterns
+
+
+*** OUTPUT DATA ***
+
+The output data looks like the input pattern data. Each line is a
+selected pattern (a selected agglomerate if --ha is used).
+
+Option --out (-o) is used to set the output file name. When omitted,
+the output file name is set from the input pattern file name. It is
+the input pattern file name + ".out". For example, if the input
+pattern file name is "patterns.txt", the default output file name is
+"patterns.txt.out".
+
+The dimensions are separated by a string specified through option
+--ods (by default " "). The elements are separated by a string
+specified through option --oes (by default ",").
+
+pp can append to each output pattern, information describing it. When
+called with option --ps, it prints the number of elements in each
+dimension. When called with option --pa, it prints the area of the
+pattern. The separators can be specified:
+* --css sets the string separating the pattern from the number of
+elements in each dimension (by default " : ")
+* --ss, used in conjunction with --css, sets the string separating two
+sizes (by default " ")
+* --sas sets the string separating the pattern or the sizes (when used
+in conjunction with --css) from the number of elements in each
+dimension (by default " : ")
+
+*** BUGS ***
+
+Report bugs to <lcerf@dcc.ufmg.br>.
+
+
+*** COPYRIGHT ***
+
+Copyright 2007-2016 Loïc Cerf (lcerf@dcc.ufmg.br) This is free
+software. You may redistribute copies of it under the terms of the GNU
+General Public License <http://www.gnu.org/licenses/gpl.html>. There
+is NO WARRANTY, to the extent permitted by law.

@@ -1,0 +1,43 @@
+*** Dependencies ***
+
+To run, pre-process (TriclusterBox) requires the Boost library. Most of GNU/Linux
+distributions have it in their repositories. Simply use your package
+manager to install it. Notice however that Debian and its derivatives
+(including the *buntu) split that library into several packages. If
+you run one of them, you must install libboost-dev,
+libboost-program-options and libboost-program-options-dev.
+
+To manually install the Boost library (for example if you are running
+a proprietary operating system), this Web page may help you:
+http://www.boost.org/more/getting_started/index.html
+
+
+*** Compilation ***
+
+pre-process (TriclusterBox) was meant to be built with GCC version 4.7 or later.
+However one can easily adapt the makefile to use another compiler.
+
+To install pp on a *NIX-like operating system, run (with
+administrator privileges):
+$ make install
+
+If you do not have access to administrator privileges or if you do not
+run a *NIX-like operating system, simply run:
+$ make
+The executable, called pp, is created in the working directory.
+You can then move it to a personal directory listed in your PATH variable.
+
+
+*** Compilation Options ***
+
+Several options can be easily enabled (respectively disabled) in
+Parameters.h by uncommenting (respectively commenting) them:
+
+OUTPUT turns on the output. This option may be disabled to evaluate
+the performance of paf independently from the writing performances of
+the disk.
+
+DEBUG turns on the output (on the standard output) of information
+during the expansion of the patterns. This option may be enabled
+by who wishes to understand how this expansion is performed on a
+small number of closed error-tolerant n-sets.
