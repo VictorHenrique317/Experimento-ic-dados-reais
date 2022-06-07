@@ -23,6 +23,8 @@ class Getf(Algorithm):
 
         experiment_folder = re.sub("/getf.experiment", "", experiment_path)
         temp_folder = f"{experiment_folder}/temp"
+	print(f"Listing patterns on folder: {temp_folder}")
+	Commands.execute(f"ls {temp_folder}"")
 
         numpy_patterns = os.listdir(temp_folder)
         for numpy_pattern in numpy_patterns:

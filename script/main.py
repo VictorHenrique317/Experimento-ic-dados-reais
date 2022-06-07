@@ -9,12 +9,12 @@ from base.file_system import FileSystem
 from utils.commands import Commands
 
 controller = Controller()
-multidupehack = Multidupehack(controller)
-paf = Paf(controller)
-pafmaxgrow = PafMaxGrow(controller)
+#multidupehack = Multidupehack(controller)
+#paf = Paf(controller)
+#pafmaxgrow = PafMaxGrow(controller)
 getf = Getf(controller)
 # triclusterbox = TriClusterBox(controller)
 
-# controller.initiateSession()
-controller.initiatePostAnalysis()
+controller.initiateSession()
+#controller.initiatePostAnalysis()
 

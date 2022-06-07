@@ -58,8 +58,10 @@ class Controller():
             algorithm.resetTimeOutInfo()
 
     def initiateSession(self):
-        FileSystem.deleteIterationFolder()
-        FileSystem.deletePostAnalysisFolder()
+	delete_iterations = str(input("Delete past iterations? Y/N: ")).strip().lower()
+	if delete_iterations == "y":
+            FileSystem.deleteIterationFolder()
+	FileSystem.deletePostAnalysisFolder()
 
         for config_file in Commands.listFolder(self.__configs_folder):
             Configs.readConfigFile(f"{self.__configs_folder}/{config_file}")
@@ -99,7 +101,7 @@ class Controller():
         for config_file in Commands.listFolder(self.__configs_folder):
             Configs.readConfigFile(f"{self.__configs_folder}/{config_file}")
             self.current_configuration_name = Configs.getParameter("configuration_name")
-            
+
             print(f"Initiating post analysis for {self.current_configuration_name}...")
             self.__analyseConfiguration(self.current_configuration_name, save=save)
 
