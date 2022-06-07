@@ -1,5 +1,5 @@
 import re
-from models.log import Log, AveragedLog
+from models.log import Log
 from models.experiment import Experiment
 from base.configs import Configs
 from utils.commands import Commands
@@ -22,8 +22,10 @@ class ExperimentCluster():
             log = Log(log_path)
             self.__logs.append(log)
 
-    def loadExperiments(self):
-        dimension = Configs.getDimension()
+        self.__loadExperiments()
+
+    def __loadExperiments(self):
+        dimension = Configs.getDimensions()
         for experiment_file in Commands.listFolder(self.__experiments_folder):  # memory dump
             experiment_path = f"{self.__experiments_folder}/{experiment_file}"
             experiment = Experiment(experiment_path, self.__u, dimension)  # memory dump

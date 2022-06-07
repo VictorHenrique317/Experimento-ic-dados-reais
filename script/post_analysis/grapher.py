@@ -9,8 +9,9 @@ from base.configs import Configs
 import matplotlib.ticker
 from post_analysis.experiment_analysis import ExperimentAnalysis
 class Grapher():
-    def __init__(self, configuration_name) -> None:
+    def __init__(self, configuration_name, dataset) -> None:
         # self.__configs = Configs()
+        self.__dataset = dataset
         self.__extra_curves = []
         self.__yscale = None
         self.__curves = None
@@ -27,15 +28,12 @@ class Grapher():
         paf = algorithms[1]
         getf = algorithms[2]
         triclusterbox = algorithms[3]
-        cancer = algorithms[4]
-        pafmaxgrow = algorithms[5]
+        pafmaxgrow = algorithms[4]
         multidupehack_paf = "Multidupehack + Paf"
-        planted_patterns_number = "Number of planted patterns"
         truncated_paf = f"First {truncate_nb} Paf patterns"
         
         self.__curves = {multidupehack:"blue", paf:"red", multidupehack_paf:"purple", \
-                 getf:"darkgreen", planted_patterns_number:"orange", truncated_paf:"magenta", triclusterbox:"brown",\
-                 cancer:"lime", pafmaxgrow:"palevioletred"}
+                 getf:"darkgreen", truncated_paf:"magenta", triclusterbox:"brown", pafmaxgrow:"palevioletred"}
 
     def setAttribute(self, attribute: Attribute):
         self.__attribute = attribute
@@ -51,9 +49,8 @@ class Grapher():
             self.__yscale = "log"
         elif attribute == Attribute.QUALITY:
             self.__yscale = "linear"
-            experiment_analysis = ExperimentAnalysis(self.__configuration_name)
+            experiment_analysis = ExperimentAnalysis(self.__configuration_name, self.__dataset)
             experiment_analysis.setQualityForExperimentClusters()
-            time.sleep(10)  # wait writing qualities to archives
 
         elif attribute == Attribute.TRUNCATED_QUALITY:
             self.__yscale = "linear"
@@ -62,25 +59,30 @@ class Grapher():
         else:
             print(f"No attribute configuration for {attribute.value}")
 
-    def __configureCurve(self,x,y,curve,u):
+    def __configureCurve(self,x,y,curve):
         color = self.__curves[curve]
         plt.scatter(x,y, color=color)
         plt.plot(x,y, color=color, label=curve)
         plt.legend()
         plt.grid()
-        plt.title(f"{self.__attribute.value} for u={u}")
-        plt.xlabel("Nb. of correct observations")
+        plt.title(f"{self.__attribute.value}")
+        plt.xlabel("u")
         plt.xlim(max(x), min(x))
         plt.ylabel(self.__attribute.value)
         axis = plt.gca()
         axis.set_ylim(self.__ylimits)
-        plt.xscale("log", basex=2)
         plt.yscale(self.__yscale)
+        # axis.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+        # axis.get_xaxis().set_minor_formatter(matplotlib.ticker.NullFormatter())
+        #
+        # axis.get_yaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+        # axis.get_yaxis().set_minor_formatter(matplotlib.ticker.NullFormatter())
+
+        # axis.set_xticks(list(x))
         axis.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
-        axis.get_xaxis().set_minor_formatter(matplotlib.ticker.NullFormatter())
-        
-        axis.get_yaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
-        axis.get_yaxis().set_minor_formatter(matplotlib.ticker.NullFormatter())
+        axis.get_yaxis().set_major_formatter(matplotlib.ticker.StrMethodFormatter('{x:.1f}'))
+
+        axis.set_xticks(Configs.getParameter('u_values'))
 
     def __dataForCombinedRuntime(self,u):
         self.__plotting_data.setAlgorithm("Multidupehack")
@@ -104,16 +106,15 @@ class Grapher():
     def __isEmpty(self, x,y):
         return len(x) == 0 and len(y) ==0
 
-    def __drawCurves(self, u):
+    def __drawCurves(self):
         for algorithm in Configs.getParameter("algorithms"):
             self.__plotting_data.setAlgorithm(algorithm)
             self.__plotting_data.setAttribute(self.__attribute)
-            self.__plotting_data.setU(u)
             x, y = self.__plotting_data.getXY()
             if self.__isEmpty(x,y): # algorithm not runned
                 continue
             
-            self.__configureCurve(x,y,algorithm, u)
+            self.__configureCurve(x,y,algorithm)
 
         for curve in self.__curves:
             truncate_nb = Configs.getParameter("nb_of_truncated_patterns")
@@ -124,31 +125,24 @@ class Grapher():
             #         continue
             #     self.__configureCurve(x,y,curve, u)
 
-            if self.__attribute == Attribute.PATTERN_NUMBER and curve == "Number of planted patterns":
-                x = Configs.getParameter("correct_obs")
-
-                pattern_number = Configs.getParameter("n_patterns")
-                y = [pattern_number for i in range(len(x))]
-                self.__configureCurve(x,y,curve, u)
-
             if self.__attribute == Attribute.QUALITY and curve == truncated_paf:
                 self.__plotting_data.setAlgorithm("Paf")
                 self.__plotting_data.setAttribute(Attribute.TRUNCATED_QUALITY)
-                self.__plotting_data.setU(u)
                 x,y = self.__plotting_data.getXY()
                 if self.__isEmpty(x,y): # paf not runned
                     continue
-                self.__configureCurve(x,y,curve, u)
+                self.__configureCurve(x,y,curve)
 
     def drawGraph(self, folder, save):
-        for u in Configs.getParameter("u_values"):
-            fig, ax = plt.subplots()
-            self.__drawCurves(u)
+        # for u in Configs.getParameter("u_values"):
+        fig, ax = plt.subplots()
+        fig = plt.figure(figsize=(12, 9))
+        self.__drawCurves()
 
-            if save:
-                filename = self.__attribute.value.lower().replace(" ", "-")
-                filename = f"{filename}-for-u-{u}.png"
-                plt.savefig(f"{folder}/{filename}")
-                plt.close(fig)
-            else:
-                plt.show()
+        if save:
+            filename = self.__attribute.value.lower().replace(" ", "-")
+            filename = f"{filename}.png"
+            plt.savefig(f"{folder}/{filename}")
+            plt.close(fig)
+        else:
+            plt.show()

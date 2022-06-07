@@ -1,7 +1,10 @@
+import itertools
+
 class Pattern():
     def __init__(self, pattern, dimension) -> None:
         self.__dimension = dimension
-        self.__pattern = self.__formatPattern(pattern)
+        self.__pattern = self.__formatPattern(pattern) # [{},{}]
+        self.__density = None
 
     def __formatPattern(self, pattern):
         if type(pattern) == list: # already formated
@@ -11,8 +14,9 @@ class Pattern():
         if len(pattern) == 0: # empty pattern
             return [set() for i in range(self.__dimension)]
 
-        pattern =  pattern.split(" ")
+        pattern = pattern.split(" ")
         if len(pattern) > self.__dimension:
+            self.__density = float(pattern[-1])
             del pattern[-1] # deletes the density of the pattern found by paf
             
         return [set(numbers.split(",")) for numbers in pattern]
@@ -56,5 +60,11 @@ class Pattern():
     def get(self):
         return self.__pattern
 
+    def getDensity(self):
+        return self.__density
+
     def getDimension(self):
         return self.__dimension
+
+    def getIndices(self): # Cartesian product
+        return [index for index in itertools.product(*self.__pattern)]

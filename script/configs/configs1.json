@@ -1,20 +1,18 @@
 {
   "configuration_name":"retweets-sparser-6789",
-  "timeout": 3600,
-  "algorithms": ["Multidupehack", "Paf", "Getf", "TriClusterBox", "Cancer", "Paf Max Grow"],
-  "correct_obs":[1,2,4,8,16],
-
-  "nb_iterations": 30,
+  "timeout": 21000,
+  "algorithms": ["Multidupehack", "Paf", "Getf", "TriClusterBox", "Paf Max Grow"],
   "u_values": [0.6,0.7,0.8,0.9],
-  "s": 3,
+  "s": [4,8,2],
+
   "a": 1000000,
 
   "plot_attributes": {
-    "Nb of patterns": ["Nb of closed ET", "Nb of selected patterns", "ets"],
-    "Run time": ["Total time", "Total time", "Total time"],
-    "Memory (mb)": ["Memory (kb)", "Memory (kb)", "Memory (kb)"],
-    "Quality": ["Quality", "Quality", "Quality"],
-    "Truncated quality": ["Truncated quality", "Truncated quality", "Truncated quality"]
+    "Nb of patterns": ["Nb of closed ET", "Nb of selected patterns", "ets", "ts"],
+    "Run time": ["Total time", "Total time", "Total time", "Total time"],
+    "Memory (mb)": ["Memory (kb)", "Memory (kb)", "Memory (kb)", "Memory (kb)"],
+    "Quality": ["Quality", "Quality", "Quality", "Quality"],
+    "Truncated quality": ["Truncated quality", "Truncated quality", "Truncated quality", "Truncated quality"]
   },
 
   "nb_of_truncated_patterns": 4,

@@ -20,13 +20,12 @@ class TriClusterBox(Algorithm):
 
     def run(self, u, observations, timeout):
         current_experiment = self.__controller.current_experiment
-        current_iteration_folder = self.__controller.current_iteration_folder
+        configuration_name = self.__controller.current_configuration_name
 
-        self.experiment_path = f"{current_iteration_folder}/output/{current_experiment}/experiments/triclusterbox.experiment"
-        self.log_path = f"{current_iteration_folder}/output/{current_experiment}/logs/triclusterbox.log"
-        fuzzy_tensor_path = f"{current_iteration_folder}/tensors/numnoise/dataset-co{observations}.fuzzy_tensor"
-        # plated_patterns_path = f"{current_iteration_folder}/tensors/gennsets/dataset.tensor"
-        multidupehack_path = f"{current_iteration_folder}/output/{current_experiment}/experiments/multidupehack.experiment"
+        self.experiment_path = f"../iteration/{configuration_name}/output/{current_experiment}/experiments/triclusterbox.experiment"
+        self.log_path = f"../iteration/{configuration_name}/output/{current_experiment}/logs/triclusterbox.log"
+        fuzzy_tensor_path = f"../iteration/{configuration_name}/tensors/numnoise/dataset-co{observations}.fuzzy_tensor"
+        multidupehack_path = f"../iteration/{configuration_name}/output/{current_experiment}/experiments/multidupehack.experiment"
 
         command = f"/usr/bin/time -o {self.log_path} -f 'Memory (kb): %M' "
         command += f"pp -f{fuzzy_tensor_path} {multidupehack_path} "

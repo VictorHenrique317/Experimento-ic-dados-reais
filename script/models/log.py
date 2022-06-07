@@ -45,7 +45,7 @@ class Log():
         for translated_attribute, variants in attributes_dict.items():
 
             if self.__algorithm == "multidupehack":
-                if variants[0] in attribute or variants[2] in attribute:
+                if variants[0] in attribute or variants[2] in attribute or variants[3] in attribute:
                     return translated_attribute
 
             if self.__algorithm == "paf":
@@ -73,7 +73,8 @@ class Log():
 
     def __translateValue(self, attribute, value):
         value = value.strip()
-        value = float(re.findall("(\d*\.*\d*)", value)[0])
+        value = re.findall("(\d*\.*\d*)", value)[0]
+        value = float(value)
         if attribute == "Memory (mb)":
             value /= 1000
 
@@ -99,42 +100,5 @@ class Log():
             file.write(line)
         self.__initialize()
 
-
-class AveragedLog():
-    def __init__(self, algorithm, averaged_attributes) -> None:
-        self.__averaged_attributes = averaged_attributes
-        self.__algorithm = algorithm
-
     def getAttributeValue(self, attribute:Attribute):
-        return self.__averaged_attributes.get(attribute.value, 0)
-
-    def getAttributes(self):
-        return self.__averaged_attributes
-
-    def getAlgorithm(self):
-        return self.__algorithm
-
-    @staticmethod
-    def average(log_groups): # twin logs from different iterations [[m_log, p_log], [m_log, p_log]]
-        averaged_algorithm_attributes = dict() # {algorithm: {attr1:value1, attr2:value2}}
-        for log_group in log_groups:
-            for log in log_group:
-                algorithm = log.getAlgorithm()
-                averaged_attributes = averaged_algorithm_attributes.setdefault(algorithm, dict())
-
-                attributes = log.getAttributes()
-                for attribute, value in attributes.items():
-                    averaged_value = averaged_attributes.setdefault(attribute, 0)
-                    averaged_value += value
-                    averaged_attributes[attribute] = averaged_value
-
-        nb_iterations = len(log_groups)
-        averaged_logs = []
-        for algorithm, attributes in averaged_algorithm_attributes.items():
-            for attribute, value in attributes.items():
-                attributes[attribute] = value/nb_iterations
-            
-            averaged_log = AveragedLog(algorithm, attributes)
-            averaged_logs.append(averaged_log)
-        
-        return averaged_logs
+        return self.__attributes.get(attribute.value, 0)

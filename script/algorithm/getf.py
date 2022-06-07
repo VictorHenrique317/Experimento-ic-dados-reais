@@ -18,7 +18,7 @@ class Getf(Algorithm):
         return u
 
     def __translateNumpyPatterns(self, experiment_path):
-        dimensions = len(self.__controller.getParameter("dataset_size"))
+        dimensions = len(self.__controller.dataset.getDimension())
         getf_patterns = [] # [[{},{}], [{},{}]]
 
         experiment_folder = re.sub("/getf.experiment", "", experiment_path)
@@ -59,22 +59,24 @@ class Getf(Algorithm):
         noise_endurance = self.__calculateNoiseEndurance(u)
 
         current_experiment = self.__controller.current_experiment
+        configuration_name = self.__controller.current_configuration_name
 
         translated_tensor_path = f"{self.__controller.base_dataset_path}.npy"
-        self.experiment_path = f"../iteration/output/{current_experiment}/experiments/getf.experiment"
-        temp_folder = f"../iteration/output/{current_experiment}/experiments/temp"
-        self.log_path = f"../iteration/output/{current_experiment}/logs/getf.log"
+        self.experiment_path = f"../iteration/{configuration_name}/output/{current_experiment}/experiments/getf.experiment"
+        temp_folder = f"../iteration/{configuration_name}/output/{current_experiment}/experiments/temp"
+        self.log_path = f"../iteration/{configuration_name}/output/{current_experiment}/logs/getf.log"
         
         command = f"/usr/bin/time -o {self.log_path} -f 'Memory (kb): %M' "
         command += f"Rscript algorithm/getf.R {translated_tensor_path} "
         command += f"{noise_endurance} "
         command += f"{max_pattern_number} "
-        command += "../iteration "
+        command += f"../iteration/{configuration_name} "
         command += f"{current_experiment}"
         print(command)
         timedout = Commands.executeWithTimeout(command, timeout)              
 
         if timedout is False:
+            print("GETF was executed sucessfully!")
             self.__createGetfFile()
         FileSystem.delete(temp_folder)
 

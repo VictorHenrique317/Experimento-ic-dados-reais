@@ -65,7 +65,7 @@ class FileSystem():
     @staticmethod
     def getClusterFolderByU(base_folder, u):
         filtered_clusters = []
-        pattern = f"co\d*-u{u}"
+        pattern = f"u{u}"
         for cluster_folder in Commands.listFolder(base_folder):
             if re.search(pattern, cluster_folder) is not None: # found
                 filtered_clusters.append(cluster_folder)
@@ -74,7 +74,7 @@ class FileSystem():
     @staticmethod
     def deleteExperiment(configuration_name, u, algorithm_name):
         base_folder = f"../iteration/{configuration_name}/output"
-        cluster_folder = FileSystem.getClusterFolderByU(base_folder, u)
+        cluster_folder = FileSystem.getClusterFolderByU(base_folder, u)[0]
 
         experiment_path = f"{base_folder}/{cluster_folder}/experiments/{algorithm_name}.experiment"
         log_path = f"{base_folder}/{cluster_folder}/logs/{algorithm_name}.log"

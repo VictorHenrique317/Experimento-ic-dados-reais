@@ -27,6 +27,20 @@ class RetweetsDataset():
         columns = {column: len(column_set) for column, column_set in columns.items()}
         return [size for size in columns.values()][:-1]
 
+    def toMatrix(self):
+        dataset = pd.read_csv(self.__path, sep=' ', header=None)
+        dataset = dataset.iloc[:, :].values
+        matrix = np.zeros(self.getDimension())
+
+        nb_indices = dataset.shape[0]
+        for line in range(nb_indices):
+            index = [int(dimension) for dimension in dataset[:, :-1][line]]
+            density = dataset[:, -1][line]
+            replacer_string = f"matrix{index} = {density}"
+            exec(replacer_string)
+
+        return matrix
+
     def __preprocess(self):
         print("Pre-processing dataset...")
 
@@ -42,3 +56,4 @@ class RetweetsDataset():
         dataset.to_csv(self.__path, header=False, sep=" ", index=False)
 
         print("Dataset was pre-processed!")
+

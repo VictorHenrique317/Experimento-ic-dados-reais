@@ -16,9 +16,6 @@ class PlottingData():
         print("Creating plotting data")
         self.__original_clusters = FileSystem.getExperimentClusters(self.__configuration_name)
 
-    def setU(self, u):
-        self.__u = u
-
     def setAttribute(self, attribute: Attribute):
         self.__attribute = attribute
 
@@ -26,12 +23,12 @@ class PlottingData():
         self.__algorithm = algorithm
 
     def getXY(self):
-        if self.__u is None or self.__attribute is None or self.__algorithm is None:
+        if self.__attribute is None or self.__algorithm is None:
             print("Set u, attribute and algorithm first")
             return
-        
-        filtered_clusters = self.__filterClustersByU(self.__original_clusters, self.__u)
-        filtered_logs = self.__filterLogsByAlgorithm(filtered_clusters, self.__algorithm)
+
+        # filtered_clusters = self.__filterClustersByU(self.__original_clusters, self.__u)
+        filtered_logs = self.__filterLogsByAlgorithm(self.__original_clusters, self.__algorithm)
         attribute_values = self.__filterLogsByAttribute(filtered_logs, self.__attribute)
 
         self.__u = None
@@ -41,25 +38,25 @@ class PlottingData():
         attribute_values = collections.OrderedDict(sorted(attribute_values.items()))
         xy = (attribute_values.keys(), attribute_values.values())
         return xy
-        
+
     def __filterClustersByU(self, clusters, u):
         return [cluster for cluster in clusters if cluster.getU() == u]
 
     def __filterLogsByAlgorithm(self, filtered_clusters, algorithm):
-        filtered_logs = dict() #{co: log, co: log}
+        filtered_logs = dict() #{u: log, u: log}
         for cluster in filtered_clusters:
             logs = cluster.getLogs()
             for log in logs:
                 if log.getAlgorithm().lower() != algorithm.lower().replace(" ", ""):
                     continue
 
-                filtered_logs[cluster.getCorrectObservations()] = log
+                filtered_logs[cluster.getU()] = log
 
         return filtered_logs
 
     def __filterLogsByAttribute(self, filtered_logs, attribute):
         attribute_values = dict()
-        for correct_observation, log in filtered_logs.items():
-            attribute_values[correct_observation] = log.getAttributeValue(attribute)
+        for u, log in filtered_logs.items():
+            attribute_values[u] = log.getAttributeValue(attribute)
 
         return attribute_values

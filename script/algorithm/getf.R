@@ -417,7 +417,8 @@ Patterns <- Get_Patterns(tensor, Factors)
 temp_path <- paste(current_iteration_folder, "/output/", current_experiment, "/experiments/temp")
 temp_path <- gsub(" ", "", temp_path)
 dir.create(temp_path)
-
+print("Creating temp folder on:")
+print(temp_path)
 for(i in 1:length(Patterns)){
     if (length(Patterns) != 0){
         Pattern <- Patterns[[i]]
@@ -426,6 +427,7 @@ for(i in 1:length(Patterns)){
         np$save(pattern_file_path, Pattern)
     }
 }
+print("Temp folder created!")
 
 log_file_path = paste(current_iteration_folder, "/output/", current_experiment, "/logs/getf.log")
 log_file_path = gsub(" ", "", log_file_path)
@@ -437,4 +439,5 @@ time_spent <- paste("Run time:", time_spent)
 # file.create(log_file_path)
 log_file <- file(log_file_path)
 writeLines(c(filler, filler, filler, filler, pattern_nb, time_spent), log_file)
+print("Log file created!")
 close(log_file)

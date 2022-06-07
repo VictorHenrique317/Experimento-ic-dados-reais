@@ -8,21 +8,21 @@ class PafMaxGrow(Algorithm):
         self.__controller = controller
         self.__controller.addAlgorithm(self)
 
-    def run(self, u, observations, timeout):
+    def run(self, u, timeout):
         current_experiment = self.__controller.current_experiment
-        current_iteration_folder = self.__controller.current_iteration_folder
+        configuration_name = self.__controller.current_configuration_name
 
-        self.experiment_path = f"{current_iteration_folder}/output/{current_experiment}/experiments/pafmaxgrow.experiment"
-        self.log_path = f"{current_iteration_folder}/output/{current_experiment}/logs/pafmaxgrow.log"
-        multidupehack_path = f"{current_iteration_folder}/output/{current_experiment}/experiments/multidupehack.experiment"
-        fuzzy_tensor_path = f"{current_iteration_folder}/tensors/numnoise/dataset-co{observations}.fuzzy_tensor"
+        self.experiment_path = f"../iteration/{configuration_name}/output/{current_experiment}/experiments/pafmaxgrow.experiment"
+        self.log_path = f"../iteration/{configuration_name}/output/{current_experiment}/logs/pafmaxgrow.log"
+        multidupehack_path = f"../iteration/{configuration_name}/output/{current_experiment}/experiments/multidupehack.experiment"
+        translated_tensor_path = f"{self.__controller.base_dataset_path}.txt"
 
         if Commands.fileExists(multidupehack_path) is False:
             print("WARNING: Multidupehack file does not exist, skipping paf...")
             return True
 
         command = f"/usr/bin/time -o {self.log_path} -f 'Memory (kb): %M' "
-        command += f"cat {fuzzy_tensor_path} | "
+        command += f"cat {translated_tensor_path} | "
         command += f"paf -o {self.experiment_path} -f "
         command += f"- -a0 {multidupehack_path} "
         command += f">> {self.log_path}"

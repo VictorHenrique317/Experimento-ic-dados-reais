@@ -16,13 +16,9 @@ class Configs():
         Configs.__dimension = dimension
 
     @staticmethod
-    def getDimension():
+    def getDimensions():
         return Configs.__dimension
 
     @staticmethod
     def getParameter(parameter):
         return Configs.__configs[parameter]
-
-    @staticmethod
-    def ufmgMatlabFolder():
-        return "~/Documents/MATLAB/bin/"
