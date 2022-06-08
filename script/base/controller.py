@@ -58,9 +58,7 @@ class Controller():
             algorithm.resetTimeOutInfo()
 
     def initiateSession(self):
-        delete_iterations = str(input("Delete past iterations? Y/N: ")).strip().lower()
-        if delete_iterations == "y":
-            FileSystem.deleteIterationFolder()
+        # FileSystem.deleteIterationFolder()
         FileSystem.deletePostAnalysisFolder()
 
         for config_file in Commands.listFolder(self.__configs_folder):
