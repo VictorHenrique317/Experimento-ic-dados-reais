@@ -15,6 +15,7 @@ import time
 import itertools
 from multiprocessing import Process
 
-dataset = RetweetsDataset()
+from utils.commands import Commands
 
+Commands.execute("Rscript test.R")
 

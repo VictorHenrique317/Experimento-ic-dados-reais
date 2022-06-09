@@ -404,21 +404,27 @@ current_iteration_folder = args[9]
 current_experiment = args[10]
 library("reticulate")
 
+print("==== GETF ====")
 np <- import("numpy")
 tensor <- np$load(translated_tensor_path)
 
 start_time <- Sys.time()
+print("Starting algorithm")
 Factors<-GETF_CP(TENS = tensor, Thres = noise_endurance, B_num = max_pattern_number, COVER = 0.9, Exhausive = T)
+print("GETF finished with success")
 end_time <- Sys.time()
 
 time_spent <- difftime(end_time, start_time, units = "secs")[[1]]
+print(paste(length(Factors), "Factors were found"))
 Patterns <- Get_Patterns(tensor, Factors)
+print(paste(length(Patterns), "Patterns were extracted from GETF output"))
 
 temp_path <- paste(current_iteration_folder, "/output/", current_experiment, "/experiments/temp")
 temp_path <- gsub(" ", "", temp_path)
-dir.create(temp_path)
 print("Creating temp folder on:")
 print(temp_path)
+dir.create(temp_path)
+print("Done!")
 for(i in 1:length(Patterns)){
     if (length(Patterns) != 0){
         Pattern <- Patterns[[i]]

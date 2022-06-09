@@ -1,0 +1,12 @@
+[1] "==== GETF ===="
+[1] "Starting algorithm"
+[1] "GETF finished with success"
+Pre-processing dataset...
+Dataset was pre-processed!
+Error: ../post_analysis - No such file or directory.
+Translated dataset to numpy tensor
+------------------------------------------------------------------------------------------------------------------------
+======================================================================================================================== U VALUE = 0.7
+/usr/bin/time -o ../iteration/retweets-sparser-6789/output/u0.7/logs/getf.log -f 'Memory (kb): %M' Rscript algorithm/getf.R ../datasets/retweets-sparser-processed.npy 0.7 1000000000 ../iteration/retweets-sparser-6789 u0.7
+GETF was executed sucessfully!
+Listing patterns on folder: ../iteration/retweets-sparser-6789/output/u0.7/experiments/temp
