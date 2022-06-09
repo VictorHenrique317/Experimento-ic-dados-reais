@@ -367,17 +367,21 @@ Get_Patterns<-function(TENS,BASIS){
   }
 
   if(is.null(dim(BASIS[[1]]))){ 
+    print("Case null")
     TENS_temp<-BASIS[[1]]
     for (i in 2:length(BASIS)) {
       TENS_temp<-TENS_temp%o%BASIS[[i]]
     }
 
     Patterns[[j]] <- array(as.numeric(TENS_temp>0),dim=dim(TENS_temp))
-  }else{ 
+  }else{
+    print("Starting to extract patterns") 
+    print(paste(1:ncol(BASIS[[1]]), "total j loops"))
     TENS_compare<-0*TENS 
     
     i <- 0
     for (j in 1:ncol(BASIS[[1]])) {
+      cat("\r", j, " done")
       TENS_temp<-BASIS[[1]][,j] 
       for (i in 2:length(BASIS)) {
         TENS_temp<-TENS_temp%o%BASIS[[i]][,j]
@@ -385,6 +389,8 @@ Get_Patterns<-function(TENS,BASIS){
       
       Patterns[[j]] <- array(as.numeric(TENS_temp>0),dim=dim(TENS_temp))
     }
+    print("Finished")
+
   }
   
   return(Patterns)
