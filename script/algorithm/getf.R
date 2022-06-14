@@ -360,14 +360,13 @@ Tensor_Simulate<-function(Dims,pattern=5,density=0.2,Noise=0.01){
   return(TENS)
 }
 
-Get_Patterns<-function(TENS,BASIS){
+Get_Patterns<-function(TENS,BASIS, temp_folder_path){
   Patterns <- list()
   if (length(BASIS[[1]]) == 0){
     return(Patterns)
   }
 
-  if(is.null(dim(BASIS[[1]]))){ 
-    print("Case null")
+  if(is.null(dim(BASIS[[1]]))){
     TENS_temp<-BASIS[[1]]
     for (i in 2:length(BASIS)) {
       TENS_temp<-TENS_temp%o%BASIS[[i]]
@@ -375,25 +374,24 @@ Get_Patterns<-function(TENS,BASIS){
 
     Patterns[[j]] <- array(as.numeric(TENS_temp>0),dim=dim(TENS_temp))
   }else{
-    print("Starting to extract patterns") 
-    print(paste(1:ncol(BASIS[[1]]), "total j loops"))
-    TENS_compare<-0*TENS 
-    
+    cat("Starting to extract", ncol(BASIS[[1]]),"patterns\n")
+    TENS_compare<-0*TENS
     i <- 0
     for (j in 1:ncol(BASIS[[1]])) {
-      cat("\r", j, " done")
-      TENS_temp<-BASIS[[1]][,j] 
+      cat("\r", j, "done")
+      TENS_temp<-BASIS[[1]][,j]
       for (i in 2:length(BASIS)) {
         TENS_temp<-TENS_temp%o%BASIS[[i]][,j]
       }
-      
-      Patterns[[j]] <- array(as.numeric(TENS_temp>0),dim=dim(TENS_temp))
-    }
-    print("Finished")
 
+      Pattern <- array(as.numeric(TENS_temp>0),dim=dim(TENS_temp))
+      pattern_file_path = paste(temp_folder_path, "/pattern_",j)
+      pattern_file_path = gsub(" ", "", pattern_file_path)
+      np$save(pattern_file_path, Pattern)
+    }
   }
-  
-  return(Patterns)
+  print("Finished")
+  return(ncol(BASIS[[1]]))
 }
 
 
@@ -417,35 +415,21 @@ tensor <- np$load(translated_tensor_path)
 start_time <- Sys.time()
 print("Starting algorithm")
 Factors<-GETF_CP(TENS = tensor, Thres = noise_endurance, B_num = max_pattern_number, COVER = 0.9, Exhausive = T)
+saveRDS(Factors, file="../temp/getf_factors.rds")
 print("GETF finished with success")
 end_time <- Sys.time()
-
 time_spent <- difftime(end_time, start_time, units = "secs")[[1]]
-print(paste(length(Factors), "Factors were found"))
-Patterns <- Get_Patterns(tensor, Factors)
-print(paste(length(Patterns), "Patterns were extracted from GETF output"))
 
 temp_path <- paste(current_iteration_folder, "/output/", current_experiment, "/experiments/temp")
 temp_path <- gsub(" ", "", temp_path)
-print("Creating temp folder on:")
-print(temp_path)
 dir.create(temp_path)
-print("Done!")
-for(i in 1:length(Patterns)){
-    if (length(Patterns) != 0){
-        Pattern <- Patterns[[i]]
-        pattern_file_path = paste(current_iteration_folder, "/output/", current_experiment, "/experiments/temp/pattern_",i)
-        pattern_file_path = gsub(" ", "", pattern_file_path)
-        np$save(pattern_file_path, Pattern)
-    }
-}
-print("Temp folder created!")
+nb_patterns <- Get_Patterns(tensor, Factors, temp_path)
 
 log_file_path = paste(current_iteration_folder, "/output/", current_experiment, "/logs/getf.log")
 log_file_path = gsub(" ", "", log_file_path)
 
 filler <- "filler:0"
-pattern_nb <- paste("Nb of patterns:", length(Patterns))
+pattern_nb <- paste("Nb of patterns:", nb_patterns)
 time_spent <- paste("Run time:", time_spent)
 
 # file.create(log_file_path)

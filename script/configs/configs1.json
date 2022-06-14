@@ -2,7 +2,7 @@
   "configuration_name":"retweets-sparser-6789",
   "timeout": 21000,
   "algorithms": ["Multidupehack", "Paf", "Getf", "TriClusterBox", "Paf Max Grow"],
-  "u_values": [0.7,0.8,0.9],
+  "u_values": [0.6,0.7,0.8,0.9],
   "s": [4,8,2],
 
   "a": 1000000,

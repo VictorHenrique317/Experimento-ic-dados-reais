@@ -58,7 +58,7 @@ class Controller():
             algorithm.resetTimeOutInfo()
 
     def initiateSession(self):
-        # FileSystem.deleteIterationFolder()
+        FileSystem.deleteIterationFolder()
         FileSystem.deletePostAnalysisFolder()
 
         for config_file in Commands.listFolder(self.__configs_folder):
